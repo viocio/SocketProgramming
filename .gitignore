@@ -1,0 +1,40 @@
+# Fișiere obiect compilate
+*.o
+*.obj
+
+# Executabile
+server
+*.exe
+
+# Fișiere temporare editor
+*~
+*.swp
+*.swo
+
+# Folder build
+build/
+bin/
+
+# Fișiere generate de CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Fișiere generate de Visual Studio
+*.vcxproj*
+*.sln
+*.user
+*.opensdf
+*.sdf
+
+# Fișiere generate de sistem
+.DS_Store
+Thumbs.db
+
+# Fișiere temporare create de IDE-uri
+.vscode/
+.idea/
+
+# Loguri
+*.log

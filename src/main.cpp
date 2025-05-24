@@ -1,7 +1,9 @@
 #include <iostream>
-using namespace std;
+#include "Server.hpp"
 
 int main()
 {
-    cout << "Hello, World!";
+    int port = 55555;
+    server::ServerHTTP serverhtpp(port);
+    std::cout << serverhtpp.getSock() << "\n";
 }
