@@ -31,6 +31,16 @@ namespace client
             return 0;
         }
 
+        int trimiteDate(int acceptedSocket, const char *buffer)
+        {
+            int byteCount = send(acceptedSocket, buffer, 200, 0);
+            if (byteCount == -1)
+            {
+                std::cerr << "Eroare la trimiterea datelor" << strerror(errno) << std::endl;
+            }
+            return byteCount;
+        }
+
         int getSock()
         {
             return sock;

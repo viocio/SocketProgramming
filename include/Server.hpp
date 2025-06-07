@@ -68,7 +68,7 @@ namespace server
             }
         }
 
-        void pornesteServer()
+        int pornesteServer()
         {
             int socketDuplicat;
             socketDuplicat = accept(sock, NULL, NULL); // functia asta blocheaza
@@ -77,6 +77,17 @@ namespace server
             {
                 std::cerr << "Eroare la accept" << strerror(errno) << std::endl;
             }
+            return socketDuplicat;
+        }
+
+        int primesteDate(int socket, char *buffer)
+        {
+            int byteCount = recv(socket, buffer, 200, 0);
+            if (byteCount == -1)
+            {
+                std::cerr << "Eroare la accept" << strerror(errno) << std::endl;
+            }
+            return byteCount;
         }
 
         int getSock()
