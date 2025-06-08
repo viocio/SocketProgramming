@@ -19,7 +19,23 @@ int main()
     writeEndpointAddress(adresaServer, 55555);
     std::cout << clientHTTP.connectToServer((sockaddr *)&adresaServer) << std::endl;
     char buffer[200];
-    printf("Introdu mesajul: ");
-    std::cin.getline(buffer, 200);
-    int byteCount = clientHTTP.trimiteDate(clientHTTP.getSock(), buffer);
+    while (true)
+    {
+        std::cout << "Trimite mesaj: ";
+        std::cin.getline(buffer, 200);
+
+        if (strcmp(buffer, "exit") == 0)
+        {
+            break; // închidem clientul dacă scriem "exit"
+        }
+
+        int byteCount = clientHTTP.trimiteDate(clientHTTP.getSock(), buffer);
+        if (byteCount == -1)
+        {
+            std::cout << "Nu s-a putut transmite ultimul mesaj!" << std::endl;
+            break;
+        }
+    }
+
+    return 0;
 }
