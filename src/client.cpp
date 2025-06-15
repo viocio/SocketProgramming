@@ -18,24 +18,27 @@ int main()
     sockaddr_in adresaServer{};
     writeEndpointAddress(adresaServer, 55555);
     std::cout << clientHTTP.connectToServer((sockaddr *)&adresaServer) << std::endl;
-    char buffer[200];
-    while (true)
-    {
-        std::cout << "Trimite mesaj: ";
-        std::cin.getline(buffer, 200);
+    char buffer[200] = "GET /";
 
-        if (strcmp(buffer, "exit") == 0)
-        {
-            break; // închidem clientul dacă scriem "exit"
-        }
+    clientHTTP.trimiteDate(clientHTTP.getSock(), buffer);
 
-        int byteCount = clientHTTP.trimiteDate(clientHTTP.getSock(), buffer);
-        if (byteCount == -1)
-        {
-            std::cout << "Nu s-a putut transmite ultimul mesaj!" << std::endl;
-            break;
-        }
-    }
+    // while (true)
+    // {
+    //     std::cout << "Trimite mesaj: ";
+    //     std::cin.getline(buffer, 200);
+
+    //     if (strcmp(buffer, "exit") == 0)
+    //     {
+    //         break; // închidem clientul dacă scriem "exit"
+    //     }
+
+    //     int byteCount = clientHTTP.trimiteDate(clientHTTP.getSock(), buffer);
+    //     if (byteCount == -1)
+    //     {
+    //         std::cout << "Nu s-a putut transmite ultimul mesaj!" << std::endl;
+    //         break;
+    //     }
+    // }
 
     return 0;
 }

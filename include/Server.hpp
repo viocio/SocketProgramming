@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <cstring>
 #include <cerrno>
+#include <sstream>
+#include <fstream>
 namespace server
 {
 
@@ -25,6 +27,22 @@ namespace server
             // un fel de padding pentru ca trebuie sockaddr_in convertit in sockaddr
             // si nu au aceleasi buffere
             memset(endpoint.sin_zero, 0, sizeof(endpoint.sin_zero));
+        }
+
+        void parseazaCerere(std::string cerere, std::string &method, std::string &path)
+        {
+            std::istringstream iss(cerere);
+            iss >> method >> path;
+        }
+
+        void rezolvaGET(std::string cerere, std::string path)
+        {
+            std::cout << "Am ajuns in rezolvaGET()" << std::endl;
+            if (path == "/")
+            {
+                path = "/home/viocio/site/index.html";
+            }
+            std::ifstream file(path, std::ios::binary);
         }
 
     public:
@@ -92,6 +110,25 @@ namespace server
                 std::cerr << "Eroare la accept" << strerror(errno) << std::endl;
             }
             return byteCount;
+        }
+
+        void proceseazaCerere(int socket)
+        {
+            char buffer[1024];
+            int byteCount = recv(socket, buffer, 1024, 0);
+            if (byteCount == -1)
+            {
+                std::cerr << "Eroare la accept" << strerror(errno) << std::endl;
+                return;
+            }
+            std::string method = "MetodaImplicita", path;
+            std::string cerere(buffer, byteCount);
+            parseazaCerere(cerere, method, path);
+            std::cout << method << std::endl;
+            if (method == "GET")
+            {
+                rezolvaGET(cerere, path);
+            }
         }
 
         int getSock()
