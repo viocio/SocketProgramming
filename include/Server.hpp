@@ -77,6 +77,10 @@ namespace server
             {
                 std::cerr << "Eroare la accept" << strerror(errno) << std::endl;
             }
+            else
+            {
+                std::cout << "S-a acceptat conexiunea!" << std::endl;
+            }
             return socketDuplicat;
         }
 
