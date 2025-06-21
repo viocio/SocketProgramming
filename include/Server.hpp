@@ -35,14 +35,85 @@ namespace server
             iss >> method >> path;
         }
 
-        void rezolvaGET(std::string cerere, std::string path)
+        std::string getContentType(const std::string &path)
+        {
+            // Extrage extensia
+            size_t punct = path.find_last_of(".");
+            if (punct == std::string::npos)
+                return "text/plain"; // fără extensie
+
+            std::string extensie = path.substr(punct + 1);
+
+            if (extensie == "html" || extensie == "htm")
+                return "text/html";
+            if (extensie == "css")
+                return "text/css";
+            if (extensie == "js")
+                return "application/javascript";
+            if (extensie == "png")
+                return "image/png";
+            if (extensie == "jpg" || extensie == "jpeg")
+                return "image/jpeg";
+            if (extensie == "gif")
+                return "image/gif";
+            if (extensie == "svg")
+                return "image/svg+xml";
+            if (extensie == "ico")
+                return "image/x-icon";
+            if (extensie == "json")
+                return "application/json";
+            if (extensie == "pdf")
+                return "application/pdf";
+            if (extensie == "txt")
+                return "text/plain";
+            if (extensie == "xml")
+                return "application/xml";
+            if (extensie == "woff")
+                return "font/woff";
+            if (extensie == "woff2")
+                return "font/woff2";
+            if (extensie == "ttf")
+                return "font/ttf";
+
+            return "application/octet-stream"; // fallback pentru necunoscute
+        }
+
+        void rezolvaGET(std::string cerere, std::string path, int socket)
         {
             std::cout << "Am ajuns in rezolvaGET()" << std::endl;
             if (path == "/")
             {
-                path = "/home/viocio/site/index.html";
+                path = "index.html"; // daca e prima cerere se serveste prima pagina
             }
-            std::ifstream file(path, std::ios::binary);
+            else
+            {
+                if (path[0] == '/')
+                {
+                    path = path.substr(1);
+                }
+            }
+            std::ifstream file(path, std::ios::binary); // se deschide fisierul in continut binar
+            if (!file)
+            {
+                std::string raspuns = "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\n404 - Not Found";
+                send(socket, raspuns.c_str(), raspuns.size(), 0);
+                close(socket);
+                return;
+            }
+            else
+            {
+                std::ostringstream ss;
+                ss << file.rdbuf();
+                std::string body = ss.str();
+                std::string header = "HTTP/1.1 200 OK";
+                std::string content_type = "Content-Type: " + getContentType(path);
+                std::string content_length = "Content-Length: " + std::to_string(body.length());
+                header = header + "\r\n" + content_type + "\r\n" + content_length + "\r\n" + "Connection: close" + "\r\n";
+                std::string response = header + "\r\n" + body;
+                send(socket, response.c_str(), response.size(), 0);
+                close(socket);
+                return;
+            }
         }
 
     public:
@@ -115,7 +186,7 @@ namespace server
         void proceseazaCerere(int socket)
         {
             char buffer[1024];
-            int byteCount = recv(socket, buffer, 1024, 0);
+            int byteCount = recv(socket, buffer, 1024, 0); // se primeste cererea de la browser, se salveaza intr-un buffer
             if (byteCount == -1)
             {
                 std::cerr << "Eroare la accept" << strerror(errno) << std::endl;
@@ -123,11 +194,11 @@ namespace server
             }
             std::string method = "MetodaImplicita", path;
             std::string cerere(buffer, byteCount);
-            parseazaCerere(cerere, method, path);
+            parseazaCerere(cerere, method, path); // se salveaza metoda HTTP (in general o sa fie doar GET) si path-ul, respectiv ce fisier se vrea de pe server
             std::cout << method << std::endl;
             if (method == "GET")
             {
-                rezolvaGET(cerere, path);
+                rezolvaGET(cerere, path, socket); // in aceasta metoda se apeleaza send()
             }
         }
 

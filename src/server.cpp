@@ -4,31 +4,20 @@
 int main()
 {
     int port = 55555;
-    char buffer[200];
-    server::ServerHTTP serverhtpp(port);
-    int socketServer = serverhtpp.pornesteServer();
+    server::ServerHTTP serverhtpp(port); // se creeaza serverul: se deschide socket, se binduieste, se instantieaza pentru liste
 
-    serverhtpp.proceseazaCerere(socketServer);
-    // std::cout << serverhtpp.getSock() << "\n";
-    // while (true)
-    // {
-    //     int byteCount = serverhtpp.primesteDate(socketServer, buffer);
-    //     if (byteCount <= 0) // clientul a închis sau eroare
-    //     {
-    //         std::cout << "Clientul a închis conexiunea sau a apărut o eroare." << std::endl;
-    //         break;
-    //     }
-
-    //     buffer[byteCount] = '\0'; // adaugă terminator de șir
-
-    //     if (strcmp(buffer, "exit") == 0)
-    //     {
-    //         std::cout << "Clientul a trimis 'exit'. Închidem conexiunea." << std::endl;
-    //         break;
-    //     }
-
-    //     std::cout << "Ai primit mesajul: " << buffer << std::endl;
-    // }
-
+    while (true)
+    {
+        int socketServer = serverhtpp.pornesteServer(); // se porneste server, se intoarce acel socket duplicat, se dar doar dupa ce se accepta o conexiune
+                                                        // se blocheaza rularea programului de metoda pornesteServer()
+        if (socketServer == -1)
+        {
+            std::cout << "A aparut o eroare" << std::endl;
+        }
+        else
+        {
+            serverhtpp.proceseazaCerere(socketServer); // se proceseaza cererea de la browser - probabil ar trebui sa fie intr-o bucla
+        }
+        }
     return 0;
 }
