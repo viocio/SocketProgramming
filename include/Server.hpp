@@ -21,9 +21,9 @@ namespace server
         // functie care seteaza parametrii adresei
         void writeEndpointAddress(sockaddr_in &endpoint, int port_)
         {
-            endpoint.sin_family = AF_INET;                     // familia - IPv4
-            endpoint.sin_port = htons(port_);                  // portul
-            endpoint.sin_addr.s_addr = inet_addr("127.0.0.1"); // adresa IP
+            endpoint.sin_family = AF_INET;                // familia - IPv4
+            endpoint.sin_port = htons(port_);             // portul
+            endpoint.sin_addr.s_addr = htonl(INADDR_ANY); // adresa IP
             // un fel de padding pentru ca trebuie sockaddr_in convertit in sockaddr
             // si nu au aceleasi buffere
             memset(endpoint.sin_zero, 0, sizeof(endpoint.sin_zero));
